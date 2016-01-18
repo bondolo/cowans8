@@ -23,8 +23,8 @@ The following code sketch uses a copy-on-write navigable set to maintain a set o
         abstract boolean handle();
         
         // ordered from highest to lowest
-        public int compareTo(Handler other) { 
-            return Integer.compare(priority, other.priority);
+        public final int compareTo(Handler other) { 
+            return -Integer.compare(priority, other.priority);
         }
     }
         

@@ -24,53 +24,60 @@ import java.util.function.Predicate;
 import java.util.function.Consumer;
 
 /**
- * A {@link java.util.NavigableSet} that uses an internal {@link CopyOnWriteArrayList}
- * for all of its operations.  Thus, it shares the same basic properties:
+ * A {@link java.util.NavigableSet} that uses an internal
+ * {@link CopyOnWriteArrayList} for all of its operations.  Thus, it shares the
+ * same basic properties:
  * <ul>
  *  <li>It is best suited for applications in which set sizes generally
- *       stay small, read-only operations
- *       vastly outnumber mutative operations, and you need
- *       to prevent interference among threads during traversal.
+ *      stay small, read-only operations vastly outnumber mutative operations,
+ *      and you need to prevent interference among threads during traversal.
  *  <li>It is thread-safe.
  *  <li>Mutative operations ({@code add}, {@code set}, {@code remove}, etc.)
  *      are expensive since they usually entail copying the entire underlying
  *      array.
  *  <li>Iterators do not support the mutative {@code remove} operation.
- *  <li>Traversal via iterators is fast and cannot encounter
- *      interference from other threads. Iterators rely on
- *      unchanging snapshots of the array at the time the iterators were
- *      constructed.
+ *  <li>Traversal via iterators is fast and cannot encounter interference from
+ *      other threads. Iterators rely on unchanging snapshots of the array at
+ *      the time the iterators were constructed.
  * </ul>
  *
- * <p><b>Sample Usage.</b> The following code sketch uses a
- * copy-on-write navigable set to maintain a set of ordered Handler objects that
- * perform some action upon state updates until one of the handlers returns
- * true indicating that the update has been handled.
+ * <p><b>Sample Usage.</b> The following code sketch uses a copy-on-write
+ * navigable set to maintain a set of ordered Handler objects that perform some
+ * action upon state updates until one of the handlers returns true indicating
+ * that the update has been handled.
  *
- *  <pre> {@code
- * class Handler implements Comparable<Handler> {
- *   // returns true if update has been handled
- *   boolean handle();
+ *  <pre>{@code
+ *  public abstract class Handler implements Comparable<Handler> {
+ *      final int priority;
  *
- *   // ordered from highest to lowest
- *   public int compareTo(Handler other) { return Integer.compare(priority, other.priority); }
- * }
+ *      protected Handler(int priority) {
+ *          this.priority = priority;
+ *      }
  *
- * class X {
- *   // Will use "Natural Order" of Comparables
- *   private final CopyOnWriteArrayNavigableSet<Handler> handlers
- *     = new CopyOnWriteArrayNavigableSet<>();
- *   public void addHandler(Handler h) { handlers.add(h); }
+ *      // returns true if update has been handled
+ *      abstract boolean handle();
  *
- *   private long internalState;
- *   private synchronized void changeState() { internalState = ...; }
+ *      // ordered from highest to lowest
+ *      public final int compareTo(Handler other) {
+ *          return -Integer.compare(priority, other.priority);
+ *      }
+ *  }
  *
- *   public void update() {
- *     changeState();
- *     for (Handler handler : handlers)
- *       if(handler.handle()) break;
- *   }
- * }}</pre>
+ *  class X {
+ *      // Will use "Natural Order" of Comparables
+ *      private final CopyOnWriteArrayNavigableSet<Handler> handlers
+ *        = new CopyOnWriteArrayNavigableSet<>();
+ *      public void addHandler(Handler h) { handlers.add(h); }
+ *
+ *      private long internalState;
+ *      private synchronized void changeState() { internalState = ...; }
+ *
+ *      public void update() {
+ *          changeState();
+ *          for (Handler handler : handlers)
+ *               if(handler.handle()) break;
+ *     }
+ *  }}</pre>
  *
  * <p>This class is a member of the
  * <a href="{@docRoot}/../technotes/guides/collections/index.html">
@@ -130,9 +137,13 @@ public class CopyOnWriteArrayNavigableSet<E> extends AbstractSet<E>
     }
 
     /**
-     * Creates a set containing all of the elements of the specified
-     * Iterable. If c is a {@link SortedSet sorted set} then the same
-     * Comparator is used.
+     * Creates a set containing all of unique elements of the specified
+     * Iterable. If the source iterable is a {@link SortedSet sorted set} then
+     * the same Comparator is used.
+     *
+     * @implNote This implementation makes makes efficient snapshots without
+     * copying elements when the source iterable is also a
+     * {@code CopyOnWriteArrayNavigableSet}.
      *
      * @param c the elements to initially contain
      * @throws NullPointerException if the specified collection is null

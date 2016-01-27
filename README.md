@@ -1,7 +1,7 @@
 # COWANS8
 ## CopyOnWriteArrayNavigableSet Implementation for Java 8
 
-A `NavigableSet` that uses an internal `CopyOnWriteArrayList` for all of its operations.  Thus, it shares the same basic properties:
+A `NavigableSet` that uses an internal sorted `CopyOnWriteArrayList` for all of its operations.  Thus, it shares the same basic properties:
 * It is best suited for applications in which set sizes generally stay small, read-only operations vastly outnumber mutative operations, and you need to prevent interference among threads during traversal.
 * It is thread-safe.
 * Mutative operations (`add`, `set`, `remove`, etc.) are expensive since they usually entail copying the entire underlying array.
@@ -11,7 +11,9 @@ A `NavigableSet` that uses an internal `CopyOnWriteArrayList` for all of its ope
 
 ### Sample Usage
 The following code sketch uses a copy-on-write navigable set to maintain a set of ordered Handler objects that perform some action upon state updates until one of the handlers returns true indicating that the update has been handled.
-
+    
+    import java.util.concurrent.CopyOnWriteArrayNavigableSet;
+ 
     abstract class Handler implements Comparable<Handler> {
         final int priority;
         
@@ -43,3 +45,19 @@ The following code sketch uses a copy-on-write navigable set to maintain a set o
                  if(handler.handle()) break;
        }
     }
+
+### Maven Usage
+
+Include the project as a dependency in your `pom.xml` file:
+
+    <dependency>
+      <groupId>org.bondolo</groupId>
+      <artifactId>cowans8</artifactId>
+      <version>5</version>
+    </dependency>
+    
+COWANS8 is distributed by Maven Central and should be automatically be found in most cases.
+    
+### License
+
+Public Domain : [CC0 1.0 Universal](http://creativecommons.org/publicdomain/zero/1.0/)

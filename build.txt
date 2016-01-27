@@ -1,0 +1,2 @@
+$ export GIT_SSH_COMMAND="ssh -i ~/.ssh/5A47D5A9.pub"
+$ mvn -gs settings.xml clean deploy release:prepare release:perform

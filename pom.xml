@@ -20,10 +20,10 @@
         <maven.javadoc.failOnError>false</maven.javadoc.failOnError>
     </properties>
     <scm>
-        <connection>scm:git:git://github.com/bondolo/cowans8.git</connection>
+        <connection>scm:git:git://git@github.com/bondolo/cowans8.git</connection>
         <developerConnection>scm:git:git@github.com:bondolo/cowans8.git</developerConnection>
         <url>https://github.com/bondolo/cowans8</url>
-      <tag>cowans8-1</tag>
+      <tag>cowans8-2</tag>
   </scm>
     <issueManagement>
         <url>https://github.com/bondolo/cowans8/issues</url>

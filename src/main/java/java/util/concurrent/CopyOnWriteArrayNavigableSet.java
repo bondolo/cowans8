@@ -861,7 +861,7 @@ public class CopyOnWriteArrayNavigableSet<E> extends AbstractSet<E>
         private int fromLoc(E[] array) {
             int start;
             if(lowerBounded) {
-                start = Arrays.binarySearch(array, lowerBound, comparator == null ? descending ? (Comparator<E>) Comparator.reverseOrder() : null : descending ? comparator.reversed() : comparator);
+                start = Arrays.binarySearch(array, lowerBound, descending ? comparator.reversed() : comparator);
                 start = start >= 0
                         ? lowerInclusive ? start : start + 1
                         : -1 - start;
